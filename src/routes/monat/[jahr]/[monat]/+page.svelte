@@ -20,10 +20,24 @@
 	<title>{MONATSNAMEN[data.monat - 1]} {data.jahr} – Sparrate</title>
 </svelte:head>
 
-<div class="mb-6 flex items-center justify-between">
-	<a href={prevHref} data-sveltekit-preload-data="off" class="rounded-lg px-2 py-1 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">←</a>
-	<h1 class="text-xl font-bold">{MONATSNAMEN[data.monat - 1]} {data.jahr}</h1>
-	<a href={nextHref} data-sveltekit-preload-data="off" class="rounded-lg px-2 py-1 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">→</a>
+<div class="mb-4 flex items-center justify-between sm:mb-6">
+	<a
+		href={prevHref}
+		data-sveltekit-preload-data="off"
+		class="flex h-11 w-11 items-center justify-center rounded-lg text-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+		aria-label="Vorheriger Monat"
+	>
+		←
+	</a>
+	<h1 class="text-lg font-bold sm:text-xl">{MONATSNAMEN[data.monat - 1]} {data.jahr}</h1>
+	<a
+		href={nextHref}
+		data-sveltekit-preload-data="off"
+		class="flex h-11 w-11 items-center justify-center rounded-lg text-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+		aria-label="Nächster Monat"
+	>
+		→
+	</a>
 </div>
 
 {#if form?.error}
@@ -33,14 +47,14 @@
 {/if}
 
 <!-- Schnelleingabe -->
-<Card title="Neue variable Ausgabe" class="mb-6">
-	<form method="POST" action="?/addVariable" use:enhance class="flex flex-wrap items-end gap-2">
-		<label class="w-40 text-sm">
+<Card title="Neue variable Ausgabe" class="mb-4 sm:mb-6">
+	<form method="POST" action="?/addVariable" use:enhance class="grid grid-cols-2 gap-3 lg:flex lg:flex-wrap lg:items-end">
+		<label class="col-span-2 text-sm sm:col-span-1 lg:w-44">
 			Kategorie
 			<select
 				name="categoryId"
 				required
-				class="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+				class="mt-1 block h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base dark:border-slate-700 dark:bg-slate-800"
 			>
 				<option value="" disabled selected>Wählen…</option>
 				{#each data.dashboard.expenseVariable as { category } (category.id)}
@@ -48,38 +62,39 @@
 				{/each}
 			</select>
 		</label>
-		<label class="flex-1 text-sm">
+		<label class="col-span-2 text-sm sm:col-span-1 lg:flex-1">
 			Name/Ort
 			<input
 				type="text"
 				name="bezeichnung"
 				placeholder="z.B. Kaufland"
-				class="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+				class="mt-1 block h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base dark:border-slate-700 dark:bg-slate-800"
 			/>
 		</label>
-		<label class="w-28 text-sm">
+		<label class="text-sm lg:w-28">
 			Betrag
 			<input
 				type="number"
+				inputmode="decimal"
 				step="0.01"
 				name="betrag"
 				placeholder="0,00"
 				required
-				class="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+				class="mt-1 block h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base dark:border-slate-700 dark:bg-slate-800"
 			/>
 		</label>
-		<label class="text-sm">
+		<label class="text-sm lg:w-auto">
 			Datum
 			<input
 				type="date"
 				name="datum"
 				value={heuteIso}
-				class="mt-1 block rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+				class="mt-1 block h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base dark:border-slate-700 dark:bg-slate-800"
 			/>
 		</label>
 		<button
 			type="submit"
-			class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white dark:bg-white dark:text-slate-900"
+			class="col-span-2 h-11 rounded-lg bg-slate-900 px-4 text-base font-medium text-white dark:bg-white dark:text-slate-900 lg:col-span-1 lg:w-auto"
 		>
 			Hinzufügen
 		</button>
@@ -87,7 +102,7 @@
 </Card>
 
 <!-- Variable Ausgaben gruppiert -->
-<Card title="Variable Ausgaben diesen Monat" class="mb-6">
+<Card title="Variable Ausgaben diesen Monat" class="mb-4 sm:mb-6">
 	{#if data.dashboard.expenseVariable.every(({ transactions: txs }) => txs.length === 0)}
 		<p class="text-sm text-slate-400">Noch keine variablen Ausgaben in diesem Monat.</p>
 	{:else}
@@ -101,16 +116,22 @@
 						</p>
 						<ul class="divide-y divide-slate-100 dark:divide-slate-800">
 							{#each txs as tx (tx.id)}
-								<li class="flex items-center justify-between py-1 text-sm">
-									<span>
+								<li class="flex items-center justify-between gap-2 py-2 text-sm">
+									<span class="min-w-0 break-words">
 										{tx.bezeichnung || '–'}
 										{#if tx.datum}<span class="ml-1 text-xs text-slate-400">({tx.datum})</span>{/if}
 									</span>
-									<span class="flex items-center gap-2">
+									<span class="flex shrink-0 items-center gap-1">
 										<span class="font-medium">{formatEuro(tx.betrag)}</span>
 										<form method="POST" action="?/deleteTransaction" use:enhance>
 											<input type="hidden" name="id" value={tx.id} />
-											<button type="submit" class="text-slate-400 hover:text-red-500" aria-label="Löschen">✕</button>
+											<button
+												type="submit"
+												class="flex h-11 w-11 items-center justify-center text-slate-400 hover:text-red-500"
+												aria-label="Löschen"
+											>
+												✕
+											</button>
 										</form>
 									</span>
 								</li>
@@ -124,7 +145,7 @@
 </Card>
 
 <!-- Zusammenfassung -->
-<div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+<div class="mb-4 grid grid-cols-1 gap-3 sm:mb-6 sm:grid-cols-3 sm:gap-4">
 	<Card>
 		<p class="text-sm text-slate-500 dark:text-slate-400">Einnahmen (gesamt)</p>
 		<p class="mt-1 text-2xl font-bold">{formatEuro(data.dashboard.summary.gesamteinkommen)}</p>
@@ -139,10 +160,10 @@
 	</Card>
 </div>
 
-<div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+<div class="mb-4 grid grid-cols-1 gap-3 sm:mb-6 sm:gap-4 md:grid-cols-2">
 	<Card>
 		<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Rest im Monat verfügbar</p>
-		<p class="mt-1 text-4xl font-extrabold {restPositiv ? 'text-emerald-500' : 'text-red-500'}">
+		<p class="mt-1 text-3xl font-extrabold sm:text-4xl {restPositiv ? 'text-emerald-500' : 'text-red-500'}">
 			{formatEuro(data.dashboard.summary.restImMonat)}
 		</p>
 		<p class="mt-0.5 text-xs text-slate-400">(Sparaufteilung schon abgezogen)</p>

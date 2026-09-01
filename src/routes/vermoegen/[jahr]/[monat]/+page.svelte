@@ -56,6 +56,7 @@
 				data: { labels, datasets },
 				options: {
 					responsive: true,
+					maintainAspectRatio: false,
 					scales: {
 						y: { stacked: true, ticks: { callback: (v) => formatEuro(Number(v)) } }
 					}
@@ -85,10 +86,24 @@
 	<title>Vermögen {MONATSNAMEN[data.monat - 1]} {data.jahr} – Sparrate</title>
 </svelte:head>
 
-<div class="mb-6 flex items-center justify-between">
-	<a href={prevHref} data-sveltekit-preload-data="off" class="rounded-lg px-2 py-1 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">←</a>
-	<h1 class="text-xl font-bold">Vermögen – {MONATSNAMEN[data.monat - 1]} {data.jahr}</h1>
-	<a href={nextHref} data-sveltekit-preload-data="off" class="rounded-lg px-2 py-1 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">→</a>
+<div class="mb-4 flex items-center justify-between sm:mb-6">
+	<a
+		href={prevHref}
+		data-sveltekit-preload-data="off"
+		class="flex h-11 w-11 items-center justify-center rounded-lg text-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+		aria-label="Vorheriger Monat"
+	>
+		←
+	</a>
+	<h1 class="text-lg font-bold sm:text-xl">Vermögen – {MONATSNAMEN[data.monat - 1]} {data.jahr}</h1>
+	<a
+		href={nextHref}
+		data-sveltekit-preload-data="off"
+		class="flex h-11 w-11 items-center justify-center rounded-lg text-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+		aria-label="Nächster Monat"
+	>
+		→
+	</a>
 </div>
 
 {#if form?.error}
@@ -97,9 +112,9 @@
 	</div>
 {/if}
 
-<Card class="mb-6">
+<Card class="mb-4 sm:mb-6">
 	<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Gesamtvermögen</p>
-	<p class="mt-1 text-4xl font-extrabold text-emerald-500">{formatEuro(data.vermoegen.total)}</p>
+	<p class="mt-1 text-3xl font-extrabold text-emerald-500 sm:text-4xl">{formatEuro(data.vermoegen.total)}</p>
 	<p class="mt-1 text-xs text-slate-400">Stand {MONATSNAMEN[data.monat - 1]} {data.jahr} (letzter erfasster Wert je Konto)</p>
 </Card>
 
@@ -107,40 +122,43 @@
 	<Card title="Konten">
 		<div class="divide-y divide-slate-100 dark:divide-slate-800">
 			{#each data.vermoegen.items as { account, betrag } (account.id)}
-				<form method="POST" action="?/setBalance" use:enhance class="flex items-center justify-between gap-2 py-1.5">
-					<span class="text-sm">{account.name}</span>
-					<span class="flex items-center gap-1.5">
+				<form method="POST" action="?/setBalance" use:enhance class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 py-2">
+					<span class="min-w-0 text-sm">{account.name}</span>
+					<span class="ml-auto flex items-center gap-2">
 						<input type="hidden" name="accountId" value={account.id} />
 						<input
 							type="number"
+							inputmode="decimal"
 							step="0.01"
 							name="betrag"
 							value={betrag}
-							class="w-28 rounded-lg border border-slate-300 bg-white px-2 py-1 text-right text-sm dark:border-slate-700 dark:bg-slate-800"
+							class="h-11 w-28 rounded-lg border border-slate-300 bg-white px-2 text-right text-base dark:border-slate-700 dark:bg-slate-800"
 						/>
 						<button
 							type="submit"
-							class="rounded-lg border border-slate-300 px-2 py-1 text-xs text-slate-500 hover:text-slate-900 dark:border-slate-700 dark:hover:text-white"
+							class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-slate-300 text-slate-500 hover:text-slate-900 dark:border-slate-700 dark:hover:text-white"
+							aria-label="Speichern"
 						>
 							✓
 						</button>
 					</span>
 				</form>
 			{:else}
-				<p class="py-1 text-sm text-slate-400">Noch keine Konten angelegt.</p>
+				<p class="py-2 text-sm text-slate-400">Noch keine Konten angelegt.</p>
 			{/each}
 		</div>
 
-		<form method="POST" action="?/createAccount" use:enhance class="mt-3 flex items-center gap-1.5">
+		<form method="POST" action="?/createAccount" use:enhance class="mt-3 flex items-center gap-2">
 			<input
 				type="text"
 				name="name"
 				placeholder="Neues Konto"
-				class="w-full rounded-lg border border-dashed border-slate-300 bg-white px-3 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-800"
+				class="h-11 w-full min-w-0 rounded-lg border border-dashed border-slate-300 bg-white px-3 text-base dark:border-slate-700 dark:bg-slate-800"
 			/>
 			<button
 				type="submit"
-				class="rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-medium text-white dark:bg-white dark:text-slate-900"
+				class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-slate-900 font-medium text-white dark:bg-white dark:text-slate-900"
+				aria-label="Konto hinzufügen"
 			>
 				+
 			</button>
@@ -151,7 +169,11 @@
 		{#if data.history.length === 0}
 			<p class="text-sm text-slate-400">Noch keine Daten vorhanden.</p>
 		{:else}
-			<canvas bind:this={canvas} class="max-h-80"></canvas>
+			<div class="overflow-x-auto">
+				<div class="h-64 w-full min-w-[560px] sm:h-72">
+					<canvas bind:this={canvas}></canvas>
+				</div>
+			</div>
 		{/if}
 	</Card>
 </div>

@@ -46,6 +46,7 @@
 				},
 				options: {
 					responsive: true,
+					maintainAspectRatio: false,
 					scales: {
 						y: { ticks: { callback: (v) => `${v}%` } }
 					}
@@ -76,13 +77,17 @@
 	<title>Verlauf – Sparrate</title>
 </svelte:head>
 
-<h1 class="mb-6 text-xl font-bold">Verlauf</h1>
+<h1 class="mb-4 text-lg font-bold sm:mb-6 sm:text-xl">Verlauf</h1>
 
-<Card title="Sparrate über die Zeit" class="mb-6">
+<Card title="Sparrate über die Zeit" class="mb-4 sm:mb-6">
 	{#if data.history.length === 0}
 		<p class="text-sm text-slate-400">Noch keine Daten vorhanden.</p>
 	{:else}
-		<canvas bind:this={canvas} class="max-h-80"></canvas>
+		<div class="overflow-x-auto">
+			<div class="h-64 w-full min-w-[560px] sm:h-72">
+				<canvas bind:this={canvas}></canvas>
+			</div>
+		</div>
 	{/if}
 </Card>
 
@@ -92,33 +97,33 @@
 			<table class="w-full text-sm">
 				<thead>
 					<tr class="border-b border-slate-200 text-left text-slate-500 dark:border-slate-800 dark:text-slate-400">
-						<th class="py-1.5 pr-2 font-medium">Monat</th>
-						<th class="py-1.5 pr-2 text-right font-medium">Einkommen</th>
-						<th class="py-1.5 pr-2 text-right font-medium">Fixkosten</th>
-						<th class="py-1.5 pr-2 text-right font-medium">Variabel</th>
-						<th class="py-1.5 pr-2 text-right font-medium">Ist-Sparrate</th>
-						<th class="py-1.5 text-right font-medium">Rest</th>
+						<th class="py-2.5 pr-2 font-medium">Monat</th>
+						<th class="py-2.5 pr-2 text-right font-medium">Einkommen</th>
+						<th class="py-2.5 pr-2 text-right font-medium">Fixkosten</th>
+						<th class="py-2.5 pr-2 text-right font-medium">Variabel</th>
+						<th class="py-2.5 pr-2 text-right font-medium">Ist-Sparrate</th>
+						<th class="py-2.5 text-right font-medium">Rest</th>
 					</tr>
 				</thead>
 				<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
 					{#each data.history as { month, summary, fixkostenSumme, variableAusgabenSumme } (month.id)}
 						<tr>
-							<td class="py-1.5 pr-2">
+							<td class="py-2.5 pr-2">
 								<a href="/monat/{month.jahr}/{month.monat}" class="hover:underline">
 									{MONATSNAMEN[month.monat - 1]} {month.jahr}
 								</a>
 							</td>
-							<td class="py-1.5 pr-2 text-right">{formatEuro(summary.gesamteinkommen)}</td>
-							<td class="py-1.5 pr-2 text-right">{formatEuro(fixkostenSumme)}</td>
-							<td class="py-1.5 pr-2 text-right">{formatEuro(variableAusgabenSumme)}</td>
+							<td class="py-2.5 pr-2 text-right">{formatEuro(summary.gesamteinkommen)}</td>
+							<td class="py-2.5 pr-2 text-right">{formatEuro(fixkostenSumme)}</td>
+							<td class="py-2.5 pr-2 text-right">{formatEuro(variableAusgabenSumme)}</td>
 							<td
-								class="py-1.5 pr-2 text-right font-medium {summary.istSparrate >= summary.sparzielProzent
+								class="py-2.5 pr-2 text-right font-medium {summary.istSparrate >= summary.sparzielProzent
 									? 'text-emerald-500'
 									: 'text-amber-500'}"
 							>
 								{formatProzent(summary.istSparrate)}
 							</td>
-							<td class="py-1.5 text-right">{formatEuro(summary.restImMonat)}</td>
+							<td class="py-2.5 text-right">{formatEuro(summary.restImMonat)}</td>
 						</tr>
 					{/each}
 				</tbody>

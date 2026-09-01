@@ -21,24 +21,26 @@
 	subcategoryId: number | null,
 	betrag: number | null
 )}
-	<form method="POST" action="?/setFixed" use:enhance class="flex items-center justify-between gap-2 py-1.5">
-		<span class="text-sm">{label}</span>
-		<span class="flex items-center gap-1.5">
+	<form method="POST" action="?/setFixed" use:enhance class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 py-2">
+		<span class="min-w-0 text-sm">{label}</span>
+		<span class="ml-auto flex items-center gap-2">
 			<input type="hidden" name="categoryId" value={categoryId} />
 			{#if subcategoryId !== null}
 				<input type="hidden" name="subcategoryId" value={subcategoryId} />
 			{/if}
 			<input
 				type="number"
+				inputmode="decimal"
 				step="0.01"
 				name="betrag"
 				value={betrag ?? ''}
 				placeholder="0,00"
-				class="w-28 rounded-lg border border-slate-300 bg-white px-2 py-1 text-right text-sm dark:border-slate-700 dark:bg-slate-800"
+				class="h-11 w-28 rounded-lg border border-slate-300 bg-white px-2 text-right text-base dark:border-slate-700 dark:bg-slate-800"
 			/>
 			<button
 				type="submit"
-				class="rounded-lg border border-slate-300 px-2 py-1 text-xs text-slate-500 hover:text-slate-900 dark:border-slate-700 dark:hover:text-white"
+				class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-slate-300 text-slate-500 hover:text-slate-900 dark:border-slate-700 dark:hover:text-white"
+				aria-label="Speichern"
 			>
 				✓
 			</button>
@@ -46,10 +48,24 @@
 	</form>
 {/snippet}
 
-<div class="mb-6 flex items-center justify-between">
-	<a href={prevHref} data-sveltekit-preload-data="off" class="rounded-lg px-2 py-1 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">←</a>
-	<h1 class="text-xl font-bold">Fixkosten – {MONATSNAMEN[data.monat - 1]} {data.jahr}</h1>
-	<a href={nextHref} data-sveltekit-preload-data="off" class="rounded-lg px-2 py-1 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">→</a>
+<div class="mb-4 flex items-center justify-between sm:mb-6">
+	<a
+		href={prevHref}
+		data-sveltekit-preload-data="off"
+		class="flex h-11 w-11 items-center justify-center rounded-lg text-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+		aria-label="Vorheriger Monat"
+	>
+		←
+	</a>
+	<h1 class="text-lg font-bold sm:text-xl">Fixkosten – {MONATSNAMEN[data.monat - 1]} {data.jahr}</h1>
+	<a
+		href={nextHref}
+		data-sveltekit-preload-data="off"
+		class="flex h-11 w-11 items-center justify-center rounded-lg text-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+		aria-label="Nächster Monat"
+	>
+		→
+	</a>
 </div>
 
 {#if form?.error}
@@ -58,7 +74,7 @@
 	</div>
 {/if}
 
-<p class="mb-6 text-sm text-slate-500 dark:text-slate-400">
+<p class="mb-4 text-sm text-slate-500 sm:mb-6 dark:text-slate-400">
 	Summe Fixkosten: <span class="font-semibold text-slate-900 dark:text-slate-100">{formatEuro(data.dashboard.fixkostenSumme)}</span>
 </p>
 

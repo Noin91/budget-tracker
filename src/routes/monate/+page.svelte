@@ -22,15 +22,15 @@
 	<title>Monate – Sparrate</title>
 </svelte:head>
 
-<h1 class="mb-6 text-xl font-bold">Monate</h1>
+<h1 class="mb-4 text-lg font-bold sm:mb-6 sm:text-xl">Monate</h1>
 
-<Card title="Monat anlegen / auswählen" class="mb-6">
-	<div class="flex flex-wrap items-end gap-2">
+<Card title="Monat anlegen / auswählen" class="mb-4 sm:mb-6">
+	<div class="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:items-end">
 		<label class="text-sm">
 			Jahr
 			<select
 				bind:value={jahr}
-				class="mt-1 block rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-800"
+				class="mt-1 block h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base dark:border-slate-700 dark:bg-slate-800"
 			>
 				{#each jahresOptionen as j (j)}
 					<option value={j}>{j}</option>
@@ -41,7 +41,7 @@
 			Monat
 			<select
 				bind:value={monat}
-				class="mt-1 block rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-800"
+				class="mt-1 block h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base dark:border-slate-700 dark:bg-slate-800"
 			>
 				{#each MONATSNAMEN as name, i (name)}
 					<option value={i + 1}>{name}</option>
@@ -51,7 +51,7 @@
 		<button
 			type="button"
 			onclick={oeffnen}
-			class="rounded-lg bg-slate-900 px-4 py-1.5 text-sm font-medium text-white dark:bg-white dark:text-slate-900"
+			class="col-span-2 h-11 rounded-lg bg-slate-900 px-4 text-base font-medium text-white sm:col-span-1 dark:bg-white dark:text-slate-900"
 		>
 			Öffnen
 		</button>
@@ -66,16 +66,16 @@
 			<table class="w-full text-sm">
 				<thead>
 					<tr class="border-b border-slate-200 text-left text-slate-500 dark:border-slate-800 dark:text-slate-400">
-						<th class="py-1.5 pr-2 font-medium">Monat</th>
-						<th class="py-1.5 pr-2 text-right font-medium">Gesamteinkommen</th>
-						<th class="py-1.5 pr-2 text-right font-medium">Ist-Sparrate</th>
-						<th class="py-1.5 pr-2 text-right font-medium">Rest</th>
+						<th class="py-2.5 pr-2 font-medium">Monat</th>
+						<th class="py-2.5 pr-2 text-right font-medium">Gesamteinkommen</th>
+						<th class="py-2.5 pr-2 text-right font-medium">Ist-Sparrate</th>
+						<th class="py-2.5 pr-2 text-right font-medium">Rest</th>
 					</tr>
 				</thead>
 				<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
 					{#each data.history as { month, summary } (month.id)}
 						<tr>
-							<td class="py-1.5 pr-2">
+							<td class="py-2.5 pr-2">
 								<a
 									href="/monat/{month.jahr}/{month.monat}"
 									class="font-medium text-slate-900 hover:underline dark:text-slate-100"
@@ -83,15 +83,15 @@
 									{MONATSNAMEN[month.monat - 1]} {month.jahr}
 								</a>
 							</td>
-							<td class="py-1.5 pr-2 text-right">{formatEuro(summary.gesamteinkommen)}</td>
+							<td class="py-2.5 pr-2 text-right">{formatEuro(summary.gesamteinkommen)}</td>
 							<td
-								class="py-1.5 pr-2 text-right font-medium {summary.istSparrate >= summary.sparzielProzent
+								class="py-2.5 pr-2 text-right font-medium {summary.istSparrate >= summary.sparzielProzent
 									? 'text-emerald-500'
 									: 'text-amber-500'}"
 							>
 								{formatProzent(summary.istSparrate)}
 							</td>
-							<td class="py-1.5 pr-2 text-right">{formatEuro(summary.restImMonat)}</td>
+							<td class="py-2.5 pr-2 text-right">{formatEuro(summary.restImMonat)}</td>
 						</tr>
 					{/each}
 				</tbody>
