@@ -1,0 +1,44 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data
+    environment:
+      - DATABASE_URL=file:/app/data/sparrate.db
+      - ORIGIN=http://192.168.0.248:8080
+    expose:
+      - "3000"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+    depends_on:
+      - app
+
+  wireguard:
+    image: ghcr.io/wg-easy/wg-easy
+    restart: unless-stopped
+    environment:
+      - WG_HOST=95.91.243.215
+      - PASSWORD_HASH=$$2a$$12$$CZ2oxjsIPtve/DqFc64U9.1NeSZqUGlyVJEqUNQTNDrRmqg5trjyK
+    volumes:
+      - ./wireguard:/etc/wireguard
+    ports:
+      - "51820:51820/udp"
+      - "51821:51821/tcp"
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv4.conf.all.src_valid_mark=1
+
+volumes:
+  caddy_data:

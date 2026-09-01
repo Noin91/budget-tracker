@@ -7,6 +7,10 @@ node_modules
 .wrangler
 /.svelte-kit
 /build
+data/
+wireguard/
+sparrate-tracker@0.0.1
+tsx
 
 # OS
 .DS_Store
