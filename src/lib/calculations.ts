@@ -25,6 +25,7 @@ export interface MonthFinancialsResult {
 	verfuegbaresBudget: number;
 	restImMonat: number;
 	istSparrate: number;
+	bilanz: number;
 	allocations: SavingsAllocationResult[];
 }
 
@@ -40,6 +41,11 @@ export function berechneMonat(input: MonthFinancialsInput): MonthFinancialsResul
 			? 0
 			: (gesamteinkommen - fixkostenSumme - variableAusgabenSumme) / gesamteinkommen;
 
+	// Bilanz: Einnahmen minus alle Ausgaben minus Sparziel ohne Reserve (Reserve zählt noch als übrig)
+	const bilanzSparanteil =
+		savingsAllocations.filter((a) => a.name !== 'Reserve').reduce((sum, a) => sum + a.percent, 0) / 100;
+	const bilanz = gesamteinkommen - fixkostenSumme - variableAusgabenSumme - gesamteinkommen * bilanzSparanteil;
+
 	const allocations: SavingsAllocationResult[] = savingsAllocations.map((a) => ({
 		id: a.id,
 		name: a.name,
@@ -47,7 +53,16 @@ export function berechneMonat(input: MonthFinancialsInput): MonthFinancialsResul
 		zielbetrag: gesamteinkommen * (a.percent / 100)
 	}));
 
-	return { gesamteinkommen, sparzielProzent, sparziel, verfuegbaresBudget, restImMonat, istSparrate, allocations };
+	return {
+		gesamteinkommen,
+		sparzielProzent,
+		sparziel,
+		verfuegbaresBudget,
+		restImMonat,
+		istSparrate,
+		bilanz,
+		allocations
+	};
 }
 
 export const MONATSNAMEN = [

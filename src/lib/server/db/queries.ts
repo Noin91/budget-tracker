@@ -182,7 +182,15 @@ export async function getMonthDashboard(monthId: number) {
 		savingsAllocations: allocations
 	});
 
-	return { incomeFixed, incomeVariable, expenseFixed, expenseVariable, summary, fixkostenSumme, variableAusgabenSumme };
+	return {
+		incomeFixed,
+		incomeVariable,
+		expenseFixed,
+		expenseVariable,
+		summary,
+		fixkostenSumme,
+		variableAusgabenSumme
+	};
 }
 
 // ---------- Verlauf über alle Monate ----------

@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import Card from '$lib/components/Card.svelte';
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
-	import { MONATSNAMEN, formatEuro } from '$lib/calculations';
+	import { MONATSNAMEN, formatEuro, formatProzent } from '$lib/calculations';
 
 	let { data, form } = $props();
 
@@ -14,6 +14,10 @@
 	const nextHref = $derived(`/monat/${nextDate.getFullYear()}/${nextDate.getMonth() + 1}`);
 
 	const restPositiv = $derived(data.dashboard.summary.restImMonat >= 0);
+	const bilanzPositiv = $derived(data.dashboard.summary.bilanz >= 0);
+	const sparrateErreicht = $derived(
+		data.dashboard.summary.istSparrate >= data.dashboard.summary.sparzielProzent
+	);
 </script>
 
 <svelte:head>
@@ -45,6 +49,35 @@
 		{form.error}
 	</div>
 {/if}
+
+<!-- Rest im Monat + Bilanz -->
+<Card class="mb-4 sm:mb-6">
+	<div class="flex items-baseline justify-between gap-2">
+		<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Rest im Monat verfügbar</p>
+		<span
+			class="rounded-full px-2 py-0.5 text-xs font-semibold {sparrateErreicht
+				? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
+				: 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300'}"
+		>
+			{formatProzent(data.dashboard.summary.istSparrate)} Sparrate
+		</span>
+	</div>
+	<p class="mt-1 text-3xl font-extrabold sm:text-4xl {restPositiv ? 'text-emerald-500' : 'text-red-500'}">
+		{formatEuro(data.dashboard.summary.restImMonat)}
+	</p>
+	<p class="mt-0.5 text-xs text-slate-400">(Sparaufteilung schon abgezogen)</p>
+	<p class="mt-1 text-xs text-slate-400">
+		von {formatEuro(data.dashboard.summary.verfuegbaresBudget)} Budget (nach Sparziel &amp; Fixkosten)
+	</p>
+
+	<div class="mt-4 border-t border-slate-100 pt-4 dark:border-slate-800">
+		<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Bilanz</p>
+		<p class="mt-1 text-2xl font-bold sm:text-3xl {bilanzPositiv ? 'text-emerald-500' : 'text-red-500'}">
+			{formatEuro(data.dashboard.summary.bilanz)}
+		</p>
+		<p class="mt-0.5 text-xs text-slate-400">Einnahmen − alle Ausgaben − Investment (10%) − Konto (20%)</p>
+	</div>
+</Card>
 
 <!-- Schnelleingabe -->
 <Card title="Neue variable Ausgabe" class="mb-4 sm:mb-6">
@@ -160,22 +193,9 @@
 	</Card>
 </div>
 
-<div class="mb-4 grid grid-cols-1 gap-3 sm:mb-6 sm:gap-4 md:grid-cols-2">
-	<Card>
-		<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Rest im Monat verfügbar</p>
-		<p class="mt-1 text-3xl font-extrabold sm:text-4xl {restPositiv ? 'text-emerald-500' : 'text-red-500'}">
-			{formatEuro(data.dashboard.summary.restImMonat)}
-		</p>
-		<p class="mt-0.5 text-xs text-slate-400">(Sparaufteilung schon abgezogen)</p>
-		<p class="mt-1 text-xs text-slate-400">
-			von {formatEuro(data.dashboard.summary.verfuegbaresBudget)} Budget (nach Sparziel &amp; Fixkosten)
-		</p>
-	</Card>
-
-	<Card title="Ist-Sparrate">
-		<ProgressBar value={data.dashboard.summary.istSparrate} target={data.dashboard.summary.sparzielProzent} />
-	</Card>
-</div>
+<Card title="Ist-Sparrate" class="mb-4 sm:mb-6">
+	<ProgressBar value={data.dashboard.summary.istSparrate} target={data.dashboard.summary.sparzielProzent} />
+</Card>
 
 <Card title="Sparziel-Aufteilung">
 	<div class="grid grid-cols-2 gap-3 sm:grid-flow-col sm:auto-cols-fr">
