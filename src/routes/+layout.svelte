@@ -13,6 +13,7 @@
 		{ href: '/einnahmen', label: 'Einnahmen' },
 		{ href: '/kategorien', label: 'Kategorien' },
 		{ href: '/vermoegen', label: 'Vermögen' },
+		{ href: '/urlaub', label: 'Urlaub' },
 		{ href: '/verlauf', label: 'Verlauf' },
 		{ href: '/einstellungen', label: 'Einstellungen' }
 	];

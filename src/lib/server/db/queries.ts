@@ -8,6 +8,8 @@ import {
 	savingsAllocations,
 	subcategories,
 	transactions,
+	vacationExpenses,
+	vacations,
 	type CategoryGroupType
 } from './schema';
 import { berechneMonat, type MonthFinancialsResult } from '$lib/calculations';
@@ -284,4 +286,50 @@ export async function getVermoegenForMonth(monthId: number) {
 	const total = entry?.total ?? 0;
 
 	return { items, total };
+}
+
+// ---------- Urlaub (unabhängige Übersicht, fließt nicht in die Sparrate ein) ----------
+
+export async function listVacations() {
+	const all = await db.query.vacations.findMany({
+		orderBy: desc(vacations.id),
+		with: { expenses: { orderBy: asc(vacationExpenses.id) } }
+	});
+	return all.map((vacation) => ({
+		...vacation,
+		total: vacation.expenses.reduce((sum, e) => sum + e.betrag, 0)
+	}));
+}
+
+export async function getVacation(id: number) {
+	return db.query.vacations.findFirst({
+		where: eq(vacations.id, id),
+		with: { expenses: { orderBy: asc(vacationExpenses.id) } }
+	});
+}
+
+export async function createVacation(name: string, datum: string | null) {
+	const [created] = await db.insert(vacations).values({ name, datum }).returning();
+	return created;
+}
+
+export async function renameVacation(id: number, name: string, datum: string | null) {
+	await db.update(vacations).set({ name, datum }).where(eq(vacations.id, id));
+}
+
+export async function deleteVacation(id: number) {
+	await db.delete(vacations).where(eq(vacations.id, id));
+}
+
+export async function addVacationExpense(
+	vacationId: number,
+	bezeichnung: string,
+	betrag: number,
+	datum: string | null
+) {
+	await db.insert(vacationExpenses).values({ vacationId, bezeichnung, betrag, datum });
+}
+
+export async function deleteVacationExpense(id: number) {
+	await db.delete(vacationExpenses).where(eq(vacationExpenses.id, id));
 }

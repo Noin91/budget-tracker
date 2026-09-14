@@ -64,6 +64,22 @@ export const transactions = sqliteTable('transactions', {
 	datum: text('datum') // ISO date string, optional
 });
 
+export const vacations = sqliteTable('vacations', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	name: text('name').notNull(),
+	datum: text('datum') // ISO date string, optional
+});
+
+export const vacationExpenses = sqliteTable('vacation_expenses', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	vacationId: integer('vacation_id')
+		.notNull()
+		.references(() => vacations.id, { onDelete: 'cascade' }),
+	bezeichnung: text('bezeichnung').notNull().default(''),
+	betrag: real('betrag').notNull(),
+	datum: text('datum') // ISO date string, optional
+});
+
 export const savingsAllocations = sqliteTable(
 	'savings_allocations',
 	{
@@ -134,4 +150,12 @@ export const transactionsRelations = relations(transactions, ({ one }) => ({
 		fields: [transactions.subcategoryId],
 		references: [subcategories.id]
 	})
+}));
+
+export const vacationsRelations = relations(vacations, ({ many }) => ({
+	expenses: many(vacationExpenses)
+}));
+
+export const vacationExpensesRelations = relations(vacationExpenses, ({ one }) => ({
+	vacation: one(vacations, { fields: [vacationExpenses.vacationId], references: [vacations.id] })
 }));

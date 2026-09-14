@@ -5,7 +5,7 @@ import * as schema from '../src/lib/server/db/schema';
 
 if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
 
-const sqlite = new DatabaseSync(process.env.DATABASE_URL);
+export const sqlite = new DatabaseSync(process.env.DATABASE_URL);
 sqlite.exec('PRAGMA foreign_keys = ON');
 
 async function proxy(sql: string, params: any[], method: 'run' | 'all' | 'values' | 'get') {
