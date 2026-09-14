@@ -44,12 +44,6 @@
 	</a>
 </div>
 
-{#if form?.error}
-	<div class="mb-4 rounded-xl border border-red-300 bg-red-50 px-4 py-2 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-300">
-		{form.error}
-	</div>
-{/if}
-
 <!-- Rest im Monat + Bilanz -->
 <Card class="mb-4 sm:mb-6">
 	<div class="flex items-baseline justify-between gap-2">
@@ -81,12 +75,16 @@
 
 <!-- Schnelleingabe -->
 <Card title="Neue variable Ausgabe" class="mb-4 sm:mb-6">
+	{#if form?.error}
+		<div class="mb-3 rounded-xl border border-red-300 bg-red-50 px-4 py-2 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-300">
+			{form.error}
+		</div>
+	{/if}
 	<form method="POST" action="?/addVariable" use:enhance class="grid grid-cols-2 gap-3 lg:flex lg:flex-wrap lg:items-end">
 		<label class="col-span-2 text-sm sm:col-span-1 lg:w-44">
 			Kategorie
 			<select
 				name="categoryId"
-				required
 				class="mt-1 block h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base dark:border-slate-700 dark:bg-slate-800"
 			>
 				<option value="" disabled selected>Wählen…</option>
@@ -112,7 +110,6 @@
 				step="0.01"
 				name="betrag"
 				placeholder="0,00"
-				required
 				class="mt-1 block h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base dark:border-slate-700 dark:bg-slate-800"
 			/>
 		</label>

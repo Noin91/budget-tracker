@@ -19,7 +19,8 @@ export const actions: Actions = {
 		const bezeichnung = String(data.get('bezeichnung') ?? '').trim();
 		const betrag = parseBetrag(data.get('betrag'));
 		const datum = String(data.get('datum') ?? '').trim();
-		if (!Number.isInteger(categoryId)) return fail(400, { error: 'Bitte eine Kategorie wählen' });
+		if (!Number.isInteger(categoryId) || categoryId <= 0)
+			return fail(400, { error: 'Bitte eine Kategorie wählen' });
 		if (betrag === null) return fail(400, { error: 'Ungültiger Betrag' });
 		await addTransaction(monthId, categoryId, bezeichnung, betrag, datum || null);
 	},
