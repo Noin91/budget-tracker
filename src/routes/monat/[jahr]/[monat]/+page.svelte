@@ -139,11 +139,14 @@
 		<div class="grid grid-cols-1 gap-x-8 md:grid-cols-2">
 			{#each data.dashboard.expenseVariable as { category, transactions: txs } (category.id)}
 				{#if txs.length > 0}
-					<div class="mb-4 last:mb-0">
-						<p class="mb-2 flex items-center justify-between text-sm font-semibold text-slate-700 dark:text-slate-200">
-							<span>{category.name}</span>
+					<details class="group mb-4 last:mb-0" open>
+						<summary class="mb-2 flex cursor-pointer list-none items-center justify-between text-sm font-semibold text-slate-700 [&::-webkit-details-marker]:hidden dark:text-slate-200">
+							<span class="flex items-center gap-1.5">
+								<span class="text-slate-400 transition-transform group-open:rotate-90">›</span>
+								{category.name}
+							</span>
 							<span class="text-slate-400">{formatEuro(txs.reduce((s, t) => s + t.betrag, 0))}</span>
-						</p>
+						</summary>
 						<ul class="divide-y divide-slate-100 dark:divide-slate-800">
 							{#each txs as tx (tx.id)}
 								<li class="flex items-center justify-between gap-2 py-2 text-sm">
@@ -167,7 +170,7 @@
 								</li>
 							{/each}
 						</ul>
-					</div>
+					</details>
 				{/if}
 			{/each}
 		</div>
