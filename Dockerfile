@@ -19,4 +19,4 @@ COPY --from=builder /app/tsconfig.json ./tsconfig.json
 ENV NODE_ENV=production
 ENV DATABASE_URL=file:/app/data/sparrate.db
 EXPOSE 3000
-CMD ["node", "build"]
+CMD ["sh", "-c", "npm run db:migrate:apply && node build"]
